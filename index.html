@@ -13,13 +13,58 @@
       <canvas id="terminal"></canvas>
 
       <div id="scenes">
-        <section class="scene" data-beat="hero"></section>
-        <section class="scene" data-beat="build"></section>
-        <section class="scene" data-beat="cut"></section>
-        <section class="scene" data-beat="artifact"></section>
-        <section class="scene" data-beat="explode"></section>
-        <section class="scene" data-beat="run"></section>
-        <section class="scene" data-beat="recap"></section>
+        <section class="scene" data-beat="hero">
+          <div class="copy center">
+            <h1>Anatomy of a Docker Image</h1>
+            <p>Scroll to build this app's image, one layer at a time.</p>
+            <div class="hint" id="scroll-hint"></div>
+          </div>
+        </section>
+        <section class="scene" data-beat="build">
+          <div class="copy">
+            <span class="label">Act I — build stage</span>
+            <p>Each instruction adds a read-only <b>layer</b>. Copy <code>package*.json</code> before the source so the install layer stays cached.</p>
+          </div>
+        </section>
+        <section class="scene" data-beat="cut">
+          <div class="copy">
+            <span class="label">Multi-stage</span>
+            <p>A second <code>FROM</code> starts a fresh stage. The whole build stage is thrown away.</p>
+          </div>
+        </section>
+        <section class="scene" data-beat="artifact">
+          <div class="copy">
+            <span class="label">Copy across stages</span>
+            <p><code>COPY --from=build</code> takes only <code>dist/</code> into the slim runtime image.</p>
+          </div>
+        </section>
+        <section class="scene" data-beat="explode">
+          <div class="copy">
+            <span class="label">Your image</span>
+            <p>Four runtime layers, roughly 25&nbsp;MB — no Node, no toolchain.</p>
+          </div>
+        </section>
+        <section class="scene" data-beat="run">
+          <div class="copy">
+            <span class="label">docker run</span>
+            <p>Map the container's port 80 to 8080 and it's live.</p>
+            <div class="browser-frame" id="browser-frame">
+              <div class="bar"><span></span><span></span><span></span>localhost:8080</div>
+              <div class="viewport">nginx is serving your site</div>
+            </div>
+          </div>
+        </section>
+        <section class="scene" data-beat="recap">
+          <div class="copy recap" id="recap">
+            <h2>Recap</h2>
+            <pre id="recap-code"></pre>
+            <div class="chips">
+              <span class="chip">layer caching</span>
+              <span class="chip">multi-stage = slim image</span>
+            </div>
+            <p class="cta">Now write your own Dockerfile.</p>
+          </div>
+        </section>
       </div>
     </div>
     <script type="module" src="/src/main.js"></script>

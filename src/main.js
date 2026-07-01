@@ -8,6 +8,12 @@ import { createMasterTimeline } from './timeline.js'
 import { createAnnotations } from './overlay/annotations.js'
 import { createParticles } from './overlay/particles.js'
 import { createTerminal } from './overlay/terminal.js'
+import { DOCKERFILE_TEXT } from './dockerfile.js'
+import { mdi } from './icons.js'
+
+document.getElementById('recap-code').textContent = DOCKERFILE_TEXT
+const hint = document.getElementById('scroll-hint')
+if (hint) hint.innerHTML = mdi('mdiChevronDown', 28, '#38f5c9')
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')

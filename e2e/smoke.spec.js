@@ -40,3 +40,10 @@ test('terminal draws near bottom of scroll', async ({ page }) => {
   })
   expect(hasInk).toBe(true)
 })
+
+test('recap shows the assembled dockerfile', async ({ page }) => {
+  await page.goto('/')
+  const code = await page.locator('#recap-code').textContent()
+  expect(code).toContain('FROM node:20-alpine AS build')
+  expect(code).toContain('FROM nginx:alpine')
+})
