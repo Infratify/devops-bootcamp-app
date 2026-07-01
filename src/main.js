@@ -4,6 +4,7 @@ import { createCameraRig } from './scene/camera.js'
 import { createWorld } from './scene/world.js'
 import { createWhale } from './scene/whale.js'
 import { createLayers } from './scene/layers.js'
+import { createMasterTimeline } from './timeline.js'
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -30,4 +31,9 @@ if (!gl) {
 
   // expose for later tasks / debugging
   window.__scene = { THREE, camera, lookTarget, world, clock, whale, layers }
+
+  const master = createMasterTimeline({
+    camera, lookTarget, whale, layers, scrollEl: document.documentElement,
+  })
+  window.__scene.master = master
 }
