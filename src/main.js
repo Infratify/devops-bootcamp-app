@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { createCameraRig } from './scene/camera.js'
 import { createWorld } from './scene/world.js'
 import { createWhale } from './scene/whale.js'
+import { createLayers } from './scene/layers.js'
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -15,6 +16,8 @@ if (!gl) {
   const world = createWorld(canvas, camera)
   const whale = createWhale()
   world.scene.add(whale.object)
+  const layers = createLayers()
+  world.scene.add(layers.object)
   const clock = new THREE.Clock()
 
   function frame() {
@@ -26,5 +29,5 @@ if (!gl) {
   frame()
 
   // expose for later tasks / debugging
-  window.__scene = { THREE, camera, lookTarget, world, clock, whale }
+  window.__scene = { THREE, camera, lookTarget, world, clock, whale, layers }
 }
