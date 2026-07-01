@@ -10,4 +10,11 @@ describe('mdi()', () => {
   it('throws for an unknown icon', () => {
     expect(() => mdi('mdiNotARealIcon')).toThrow(/Unknown MDI/)
   })
+  it('resolves the volume icons used by the audio controls', () => {
+    for (const name of ['mdiVolumeHigh', 'mdiVolumeOff']) {
+      const out = mdi(name)
+      expect(out).toContain('<svg')
+      expect(out).toContain('<path')
+    }
+  })
 })

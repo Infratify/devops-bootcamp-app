@@ -11,6 +11,8 @@ import {
   mdiLanConnect,
   mdiLayersTriple,
   mdiTransferRight,
+  mdiVolumeHigh,
+  mdiVolumeOff,
 } from '@mdi/js'
 
 const ICONS = {
@@ -24,6 +26,8 @@ const ICONS = {
   mdiLanConnect,
   mdiLayersTriple,
   mdiTransferRight,
+  mdiVolumeHigh,
+  mdiVolumeOff,
 }
 
 export function mdi(name, size = 18, color = '#7dd3fc') {
