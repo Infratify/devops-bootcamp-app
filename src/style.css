@@ -6,12 +6,11 @@
 html, body { margin: 0; background: var(--bg); color: var(--text); }
 body { font-family: var(--mono); }
 
-#stage, #particles, #terminal {
+#stage, #particles {
   position: fixed; inset: 0; width: 100vw; height: 100vh; display: block;
 }
 #stage { z-index: 1; }
 #particles { z-index: 0; }
-#terminal { z-index: 3; pointer-events: none; }
 #svg-overlay { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 2; pointer-events: none; }
 
 #scenes { position: relative; z-index: 4; }
@@ -56,11 +55,12 @@ body { font-family: var(--mono); }
 #ceremony.show .cl:nth-child(4) { transition-delay: 0.27s; }
 #ceremony.show .cl:nth-child(5) { transition-delay: 0.36s; }
 #ceremony.show .cl:nth-child(6) { transition-delay: 0.45s; }
-/* once the wipe finishes: glow pulse + a gentle idle float/sway */
+/* once the wipe finishes: glow pulse + a prominent vertical float paced to the
+   whale's bob (~5.2s period) */
 #ceremony.show #ceremony-art {
   animation:
-    ceremony-glow 2.4s ease-in-out infinite 0.7s,
-    ceremony-float 5.5s ease-in-out infinite 0.7s;
+    ceremony-glow 2.2s ease-in-out infinite 0.7s,
+    ceremony-float 5.2s ease-in-out infinite 0.7s;
 }
 @keyframes ceremony-glow {
   0%, 100% { text-shadow: 0 0 12px rgba(34, 211, 238, 0.75),
@@ -69,8 +69,8 @@ body { font-family: var(--mono); }
     0 3px 0 #0b6b82, 0 6px 0 #06414f, 0 10px 18px rgba(0, 0, 0, 0.6); }
 }
 @keyframes ceremony-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-7px) rotate(-0.5deg); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
 }
 @media (prefers-reduced-motion: reduce) {
   #ceremony-art .cl { transition: opacity 0.3s ease; transform: none; clip-path: none; filter: none; }
@@ -87,23 +87,10 @@ body { font-family: var(--mono); }
   border-radius: 12px; padding: 20px 22px; backdrop-filter: blur(3px); }
 .copy.center { text-align: center; background: transparent; border: 0; }
 .copy h1 { color: #e2e8f0; font-size: clamp(28px, 5vw, 52px); margin: 0 0 10px; }
-.copy h2 { color: #e2e8f0; }
 .copy p { color: #9fb3c8; line-height: 1.6; }
-.label { display: inline-block; text-transform: uppercase; letter-spacing: 2px;
-  font-size: 11px; color: var(--cyan); margin-bottom: 8px; }
 code { color: #a5f3fc; background: rgba(56,245,201,.08); padding: 1px 5px; border-radius: 4px; }
 .hint { margin-top: 24px; opacity: .7; display: flex; justify-content: center; animation: nudge 1.6s infinite; }
 @keyframes nudge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
-
-.browser-frame { margin-top: 16px; border: 1px solid #16606b; border-radius: 8px; overflow: hidden; }
-.browser-frame .bar { background: #0e1826; color: #64748b; font-size: 11px; padding: 6px 10px; display: flex; gap: 6px; align-items: center; }
-.browser-frame .bar span { width: 8px; height: 8px; border-radius: 50%; background: #334155; }
-.browser-frame .viewport { background: #050a12; color: #38f5c9; padding: 28px; text-align: center; font-size: 13px; }
-
-.recap pre { background: #050a12; border: 1px solid #16606b; border-radius: 8px; padding: 14px; color: #a5f3fc; overflow: auto; font-size: 12.5px; }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
-.chip { background: rgba(56,245,201,.14); color: #7cffe0; border-radius: 20px; padding: 4px 10px; font-size: 11px; }
-.cta { color: #e2e8f0; font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) { .hint { animation: none; } }
 
