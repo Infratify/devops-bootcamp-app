@@ -20,6 +20,7 @@ test('scrolling to the bottom scrubs without errors and moves the whale', async 
   await page.waitForFunction(() => document.body.dataset.mode === 'webgl')
   const startX = await page.evaluate(() => window.__scene.whale.object.position.x)
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  // ~5fps headless WebGL + anime sync smoothing converges per-frame, so allow generous wall-clock
   await page.waitForTimeout(15000)
   const endX = await page.evaluate(() => window.__scene.whale.object.position.x)
   expect(endX).toBeGreaterThan(startX)
@@ -46,4 +47,20 @@ test('recap shows the assembled dockerfile', async ({ page }) => {
   const code = await page.locator('#recap-code').textContent()
   expect(code).toContain('FROM node:20-alpine AS build')
   expect(code).toContain('FROM nginx:alpine')
+})
+
+test('scrubbing through all beats produces no errors', async ({ page }) => {
+  const errors = []
+  page.on('pageerror', (e) => errors.push(e.message))
+  await page.goto('/')
+  await page.waitForFunction(() => document.body.dataset.mode === 'webgl')
+  const steps = 12
+  for (let i = 0; i <= steps; i++) {
+    await page.evaluate((f) => {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      window.scrollTo(0, max * f)
+    }, i / steps)
+    await page.waitForTimeout(120)
+  }
+  expect(errors, errors.join('\n')).toEqual([])
 })
