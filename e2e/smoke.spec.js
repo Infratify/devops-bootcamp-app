@@ -13,17 +13,21 @@ test('page boots in webgl mode with no console errors', async ({ page }) => {
   expect(errors, errors.join('\n')).toEqual([])
 })
 
-test('scrolling to the bottom scrubs without errors and moves the whale', async ({ page }) => {
+test('scrolling to the bottom scrubs without errors and reveals the Docker logo', async ({ page }) => {
+  test.setTimeout(60000)
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   await page.goto('/')
   await page.waitForFunction(() => document.body.dataset.mode === 'webgl')
-  const startX = await page.evaluate(() => window.__scene.whale.object.position.x)
+  // whale's own containers start hidden (scale ~0), revealed by the finale
+  const startScale = await page.evaluate(() => window.__scene.whale.containers.scale.x)
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  // ~5fps headless WebGL + anime sync smoothing converges per-frame, so allow generous wall-clock
-  await page.waitForTimeout(15000)
-  const endX = await page.evaluate(() => window.__scene.whale.object.position.x)
-  expect(endX).toBeGreaterThan(startX)
+  // ~5fps headless WebGL + anime sync smoothing converges per-frame; wait for the
+  // actual reveal rather than a fixed sleep (robust to variable frame rate).
+  await page.waitForFunction(() => window.__scene.whale.containers.scale.x > 0.9, { timeout: 50000 })
+  const endScale = await page.evaluate(() => window.__scene.whale.containers.scale.x)
+  expect(startScale).toBeLessThan(0.1)
+  expect(endScale).toBeGreaterThan(0.5)
   expect(errors, errors.join('\n')).toEqual([])
 })
 

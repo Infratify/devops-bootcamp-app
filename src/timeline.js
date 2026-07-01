@@ -1,9 +1,10 @@
 import { createTimeline, onScroll } from 'animejs'
 import { CAMERA_KEYS } from './scene/camera.js'
+import { LAYER_SPACING, LAYER_BASE_Y } from './scene/layers.js'
 
 const D = 1000 // total timeline units; scroll 0..1 maps to 0..D
 
-export function createMasterTimeline({ camera, lookTarget, whale, layers, scrollEl }) {
+export function createMasterTimeline({ camera, lookTarget, whale, layers, bloom, scrollEl }) {
   const tl = createTimeline({ autoplay: false, defaults: { ease: 'linear' } })
 
   // --- camera path: chain absolute-positioned tweens across the whole scroll ---
@@ -21,29 +22,34 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, scroll
     const at = (0.08 + (i / build.length) * 0.34) * D
     const dur = 0.05 * D
     tl.add(s.mesh.position, { y: s.home.y, duration: dur, ease: 'outBack' }, at)
-    tl.add(s.mesh.material, { opacity: 0.9, duration: dur }, at)
-    tl.add(s.edges.material, { opacity: 1, duration: dur }, at)
+    tl.add(s.mat, { opacity: 0.9, duration: dur }, at)
+    tl.add(s.edgeMat, { opacity: 1, duration: dur }, at)
+    tl.add(s.labelOn, { v: 1, duration: dur }, at)
   })
 
-  // --- Multi-stage cut (45%..58%): dim + drop away the build stack ---
+  // --- Multi-stage cut (45%..58%): a second FROM starts a fresh stage. The
+  //     build stack stays on screen (moved aside, dimmed, UNLABELLED) so both
+  //     stages are visible; it is discarded for good only at the final reveal. ---
   build.forEach((s) => {
-    tl.add(s.mesh.material, { opacity: 0.12, duration: 0.08 * D }, 0.46 * D)
-    tl.add(s.edges.material, { opacity: 0.15, duration: 0.08 * D }, 0.46 * D)
-    tl.add(s.mesh.position, { x: -9, duration: 0.1 * D, ease: 'inQuad' }, 0.48 * D)
+    tl.add(s.labelOn, { v: 0, duration: 0.05 * D }, 0.46 * D)
+    tl.add(s.mat, { opacity: 0.4, duration: 0.08 * D }, 0.46 * D)
+    tl.add(s.edgeMat, { opacity: 0.5, duration: 0.08 * D }, 0.46 * D)
+    tl.add(s.mesh.position, { x: -1.5, duration: 0.1 * D, ease: 'inOutQuad' }, 0.48 * D)
   })
 
   // --- Runtime stage (52%..72%): slabs appear from y=0 upward, small stack ---
   const runtime = layers.slabs.filter((s) => s.data.stage === 'runtime')
   runtime.forEach((s, i) => {
-    // restack runtime slabs near origin (independent of build home)
-    const targetY = i * 0.68
+    // restack runtime slabs on the deck (independent of build home)
+    const targetY = LAYER_BASE_Y + i * LAYER_SPACING
     s.home.set(0, targetY, 0)
     s.mesh.position.set(0, targetY + 5, 0)
     const at = (0.54 + (i / runtime.length) * 0.16) * D
     const dur = 0.05 * D
     tl.add(s.mesh.position, { y: targetY, duration: dur, ease: 'outBack' }, at)
-    tl.add(s.mesh.material, { opacity: 0.92, duration: dur }, at)
-    tl.add(s.edges.material, { opacity: 1, duration: dur }, at)
+    tl.add(s.mat, { opacity: 0.92, duration: dur }, at)
+    tl.add(s.edgeMat, { opacity: 1, duration: dur }, at)
+    tl.add(s.labelOn, { v: 1, duration: dur }, at)
   })
 
   // --- Exploded cutaway (72%..85%): spread runtime slabs apart, then reassemble ---
@@ -53,9 +59,32 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, scroll
     tl.add(s.mesh.position, { y: s.home.y, duration: 0.05 * D, ease: 'inOutQuad' }, 0.80 * D)
   })
 
-  // --- Run (88%..100%): whale sails off to the right carrying the stack ---
-  tl.add(whale.object.position, { x: 10, duration: 0.12 * D, ease: 'inQuad' }, 0.88 * D)
-  tl.add(layers.object.position, { x: 10, duration: 0.12 * D, ease: 'inQuad' }, 0.88 * D)
+  // --- FINALE (85%..99%): the two stacks COMBINE, then the real Docker logo reveals ---
+  // 1. both stacks slide together onto the whale's deck (combine), still visible
+  layers.slabs.forEach((s) => {
+    tl.add(s.labelOn, { v: 0, duration: 0.02 * D }, 0.85 * D)
+    tl.add(s.mesh.position, { x: 0, y: 0.4, z: 0, duration: 0.06 * D, ease: 'inOutQuad' }, 0.85 * D)
+  })
+  // 2. the merged stack dissolves as the real containers take its place
+  layers.slabs.forEach((s) => {
+    tl.add(s.mesh.scale, { x: 0.01, y: 0.01, z: 0.01, duration: 0.04 * D, ease: 'inQuad' }, 0.90 * D)
+    tl.add(s.mat, { opacity: 0, duration: 0.035 * D }, 0.90 * D)
+    tl.add(s.edgeMat, { opacity: 0, duration: 0.035 * D }, 0.90 * D)
+  })
+  // 3. white flash at the moment of reveal
+  tl.add('#flash', { opacity: 0.85, duration: 0.02 * D, ease: 'outQuad' }, 0.905 * D)
+  tl.add('#flash', { opacity: 0, duration: 0.07 * D, ease: 'inQuad' }, 0.925 * D)
+  // 4. bloom flare, then settle
+  tl.add(bloom, { strength: 1.9, duration: 0.02 * D }, 0.905 * D)
+  tl.add(bloom, { strength: 0.75, duration: 0.07 * D, ease: 'outQuad' }, 0.925 * D)
+  // 5. the whale's OWN containers burst in (elastic pop). Explicit [from, to]
+  //    so the tween fills deterministically both ways (reverses on scroll-up).
+  tl.add(whale.containers.scale, {
+    x: [0.0001, 1], y: [0.0001, 1], z: [0.0001, 1],
+    duration: 0.085 * D, ease: 'outElastic(1, .45)',
+  }, 0.91 * D)
+  // 6. a triumphant spin of the whole whale as the logo lands
+  tl.add(whale.body.rotation, { y: [0, Math.PI * 0.6], duration: 0.09 * D, ease: 'outCubic' }, 0.90 * D)
 
   // --- link to scroll ---
   onScroll({ target: scrollEl, sync: 0.15, enter: 'top top', leave: 'bottom bottom' }).link(tl)

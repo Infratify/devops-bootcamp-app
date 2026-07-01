@@ -27,8 +27,14 @@ const ICONS = {
 }
 
 export function mdi(name, size = 18, color = '#7dd3fc') {
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true">
+    <path fill="${color}" d="${mdiPath(name)}"/></svg>`
+}
+
+// Raw 24x24 path data for a given icon name — for embedding directly into an
+// existing SVG (e.g. the blueprint annotation chips) rather than a full <svg>.
+export function mdiPath(name) {
   const path = ICONS[name]
   if (!path) throw new Error(`Unknown MDI icon: ${name}`)
-  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true">
-    <path fill="${color}" d="${path}"/></svg>`
+  return path
 }

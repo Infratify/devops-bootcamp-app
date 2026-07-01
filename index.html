@@ -20,30 +20,10 @@
             <div class="hint" id="scroll-hint"></div>
           </div>
         </section>
-        <section class="scene" data-beat="build">
-          <div class="copy">
-            <span class="label">Act I — build stage</span>
-            <p>Each instruction adds a read-only <b>layer</b>. Copy <code>package*.json</code> before the source so the install layer stays cached.</p>
-          </div>
-        </section>
-        <section class="scene" data-beat="cut">
-          <div class="copy">
-            <span class="label">Multi-stage</span>
-            <p>A second <code>FROM</code> starts a fresh stage. The whole build stage is thrown away.</p>
-          </div>
-        </section>
-        <section class="scene" data-beat="artifact">
-          <div class="copy">
-            <span class="label">Copy across stages</span>
-            <p><code>COPY --from=build</code> takes only <code>dist/</code> into the slim runtime image.</p>
-          </div>
-        </section>
-        <section class="scene" data-beat="explode">
-          <div class="copy">
-            <span class="label">Your image</span>
-            <p>Four runtime layers, roughly 25&nbsp;MB — no Node, no toolchain.</p>
-          </div>
-        </section>
+        <section class="scene" data-beat="build"></section>
+        <section class="scene" data-beat="cut"></section>
+        <section class="scene" data-beat="artifact"></section>
+        <section class="scene" data-beat="explode"></section>
         <section class="scene" data-beat="run">
           <div class="copy">
             <span class="label">docker run</span>
@@ -66,6 +46,7 @@
           </div>
         </section>
       </div>
+      <div id="flash"></div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

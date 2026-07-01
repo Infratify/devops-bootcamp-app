@@ -15,6 +15,12 @@ body { font-family: var(--mono); }
 #svg-overlay { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 2; pointer-events: none; }
 
 #scenes { position: relative; z-index: 4; }
+
+/* full-screen flare for the finale reveal (driven by the scroll timeline) */
+#flash {
+  position: fixed; inset: 0; z-index: 6; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 50% 55%, #d6fff5, #38f5c9 42%, transparent 72%);
+}
 .scene { height: 90vh; }               /* ~630vh total scroll */
 .scene[data-beat="hero"] { height: 100vh; }
 

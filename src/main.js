@@ -35,7 +35,8 @@ if (shouldUseFallback({ gl, reducedMotion })) {
   const clock = new THREE.Clock()
 
   const master = createMasterTimeline({
-    camera, lookTarget, whale, layers, scrollEl: document.documentElement,
+    camera, lookTarget, whale, layers, bloom: world.bloom,
+    scrollEl: document.documentElement,
   })
 
   const annotations = createAnnotations({
@@ -46,14 +47,20 @@ if (shouldUseFallback({ gl, reducedMotion })) {
   const particles = createParticles(document.getElementById('particles'))
   const terminal = createTerminal(document.getElementById('terminal'))
 
+  let last = 0
   function frame() {
     requestAnimationFrame(frame)
     const elapsed = clock.getElapsedTime()
+    const delta = elapsed - last; last = elapsed
+    const sp = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight || 1)
     camera.lookAt(lookTarget)
     whale.update(elapsed)
+    // Finale: once the Docker logo is revealed (its containers scaled in), spin
+    // the whole whale as a continuous 360° turntable; otherwise keep it forward.
+    const revealed = sp > 0.6 && whale.containers.scale.x > 0.9
+    whale.object.rotation.y = revealed ? whale.object.rotation.y + delta * 0.5 : 0
     annotations.update()
     particles.update(elapsed)
-    const sp = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight || 1)
     terminal.setProgress(sp <= 0.85 ? 0 : (sp - 0.85) / 0.15)
     world.composer.render()
   }
