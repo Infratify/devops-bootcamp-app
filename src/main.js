@@ -5,6 +5,7 @@ import { createWorld } from './scene/world.js'
 import { createWhale } from './scene/whale.js'
 import { createLayers } from './scene/layers.js'
 import { createMasterTimeline } from './timeline.js'
+import { createAnnotations } from './overlay/annotations.js'
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -21,19 +22,24 @@ if (!gl) {
   world.scene.add(layers.object)
   const clock = new THREE.Clock()
 
+  const master = createMasterTimeline({
+    camera, lookTarget, whale, layers, scrollEl: document.documentElement,
+  })
+
+  const annotations = createAnnotations({
+    svgRoot: document.getElementById('svg-overlay'),
+    slabs: layers.slabs, camera, renderer: world.renderer,
+  })
+
   function frame() {
     requestAnimationFrame(frame)
     camera.lookAt(lookTarget)
     whale.update(clock.getElapsedTime())
+    annotations.update()
     world.composer.render()
   }
   frame()
 
   // expose for later tasks / debugging
-  window.__scene = { THREE, camera, lookTarget, world, clock, whale, layers }
-
-  const master = createMasterTimeline({
-    camera, lookTarget, whale, layers, scrollEl: document.documentElement,
-  })
-  window.__scene.master = master
+  window.__scene = { THREE, camera, lookTarget, world, clock, whale, layers, master, annotations }
 }
