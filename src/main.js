@@ -10,6 +10,7 @@ import { createParticles } from './overlay/particles.js'
 import { createTerminal } from './overlay/terminal.js'
 import { DOCKERFILE_TEXT } from './dockerfile.js'
 import { mdi } from './icons.js'
+import { shouldUseFallback, renderFallback } from './fallback.js'
 
 document.getElementById('recap-code').textContent = DOCKERFILE_TEXT
 const hint = document.getElementById('scroll-hint')
@@ -17,9 +18,12 @@ if (hint) hint.innerHTML = mdi('mdiChevronDown', 28, '#38f5c9')
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-if (!gl) {
+if (shouldUseFallback({ gl, reducedMotion })) {
   document.body.dataset.mode = 'fallback'
+  document.getElementById('scenes').style.display = 'none'
+  renderFallback(document.getElementById('app'))
 } else {
   document.body.dataset.mode = 'webgl'
   const { camera, lookTarget } = createCameraRig()

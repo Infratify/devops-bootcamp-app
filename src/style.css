@@ -45,3 +45,10 @@ code { color: #a5f3fc; background: rgba(56,245,201,.08); padding: 1px 5px; borde
 .cta { color: #e2e8f0; font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) { .hint { animation: none; } }
+
+.fb-layers { list-style: none; padding: 0; max-width: 760px; }
+.fb-layers li { display: grid; grid-template-columns: 28px 1fr; gap: 6px 12px;
+  align-items: start; padding: 10px 0; border-bottom: 1px solid #16303f; }
+.fb-layers .fb-note { grid-column: 2; color: #9fb3c8; font-size: 13px; }
+.fallback pre { background: #050a12; border: 1px solid #16606b; border-radius: 8px;
+  padding: 14px; color: #a5f3fc; overflow: auto; }
