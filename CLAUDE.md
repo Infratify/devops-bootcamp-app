@@ -56,6 +56,25 @@ Because tweens are scrubbed **both directions** (scroll up reverses them), sever
 - `annotations.js` — SVG chips parked in a right-hand gutter, each joined to its slab by a leader line. Each chip also carries a step-number badge (its 1-based Dockerfile command order) floating just past the chip's right edge. Positions are projected from 3D each frame and de-collided vertically (`MIN_GAP`).
 - `particles.js` — Canvas 2D scanlines + drifting "plankton".
 
+### Audio (`src/audio/`, `src/beats.js`)
+
+Asset-free procedural sound (Web Audio API, no files), present **only in the
+WebGL branch** — the reduced-motion/fallback view is silent. Starts on a one-time
+hero "enable sound" invite (`ctx.resume()` needs a user gesture), then a corner
+mute toggle.
+
+- `src/beats.js` — **single source of truth for beat timings** (layer-drop
+  positions, `CUT_AT`, `REVEAL_AT`, and the `AUDIO_CUES` list). `timeline.js`
+  *and* the audio triggers both import it, so sound and visuals never drift.
+- `src/audio/triggers.js` — pure, unit-tested: `crossedForward()` (forward-only,
+  fast-scrub collapses to one tick) and `bedCurve()` (bed intensity).
+- `src/audio/{context,bed,sfx}.js` — the Web Audio graph (context + synthesized
+  reverb, the drone bed, the three one-shots). Not unit-testable in jsdom;
+  covered by `e2e/audio.spec.js`.
+- `src/audio/index.js` — `createAudio()`; `main.js` calls `audio.update(master.progress)`
+  each frame using the **smoothed anime.js timeline playhead** (not raw scroll),
+  so SFX land with the visuals.
+
 ### `src/icons.js`
 MDI icons are imported by **named static import** (`import { mdiFoo } from '@mdi/js'`) — never `import * as` — so the bundler tree-shakes the ~2.8 MB icon set down to only what's used. Adding an icon means adding **both** the named import and the entry in the local `ICONS` map.
 
