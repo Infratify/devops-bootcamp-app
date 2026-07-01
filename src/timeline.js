@@ -1,6 +1,7 @@
 import { createTimeline, onScroll } from 'animejs'
 import { CAMERA_KEYS } from './scene/camera.js'
 import { LAYER_SPACING, LAYER_BASE_Y } from './scene/layers.js'
+import { BUILD_DROPS, RUNTIME_DROPS } from './beats.js'
 
 const D = 1000 // total timeline units; scroll 0..1 maps to 0..D
 
@@ -19,7 +20,7 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, bloom,
   // --- Act I (8%..45%): build-stage slabs drop in + fade, staggered ---
   const build = layers.slabs.filter((s) => s.data.stage === 'build')
   build.forEach((s, i) => {
-    const at = (0.08 + (i / build.length) * 0.34) * D
+    const at = BUILD_DROPS[i] * D
     const dur = 0.05 * D
     tl.add(s.mesh.position, { y: s.home.y, duration: dur, ease: 'outBack' }, at)
     tl.add(s.mat, { opacity: 0.9, duration: dur }, at)
@@ -44,7 +45,7 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, bloom,
     const targetY = LAYER_BASE_Y + i * LAYER_SPACING
     s.home.set(0, targetY, 0)
     s.mesh.position.set(0, targetY + 5, 0)
-    const at = (0.54 + (i / runtime.length) * 0.16) * D
+    const at = RUNTIME_DROPS[i] * D
     const dur = 0.05 * D
     tl.add(s.mesh.position, { y: targetY, duration: dur, ease: 'outBack' }, at)
     tl.add(s.mat, { opacity: 0.92, duration: dur }, at)
