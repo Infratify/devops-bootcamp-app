@@ -6,6 +6,7 @@ import { createWhale } from './scene/whale.js'
 import { createLayers } from './scene/layers.js'
 import { createMasterTimeline } from './timeline.js'
 import { createAnnotations } from './overlay/annotations.js'
+import { createParticles } from './overlay/particles.js'
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -31,11 +32,15 @@ if (!gl) {
     slabs: layers.slabs, camera, renderer: world.renderer,
   })
 
+  const particles = createParticles(document.getElementById('particles'))
+
   function frame() {
     requestAnimationFrame(frame)
+    const elapsed = clock.getElapsedTime()
     camera.lookAt(lookTarget)
-    whale.update(clock.getElapsedTime())
+    whale.update(elapsed)
     annotations.update()
+    particles.update(elapsed)
     world.composer.render()
   }
   frame()
