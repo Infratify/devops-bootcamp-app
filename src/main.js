@@ -9,6 +9,7 @@ import { createAnnotations } from './overlay/annotations.js'
 import { createParticles } from './overlay/particles.js'
 import { mdi } from './icons.js'
 import { shouldUseFallback, renderFallback } from './fallback.js'
+import { createAudio } from './audio/index.js'
 
 const hint = document.getElementById('scroll-hint')
 if (hint) hint.innerHTML = mdi('mdiChevronDown', 28, '#38f5c9')
@@ -44,6 +45,24 @@ if (shouldUseFallback({ gl, reducedMotion })) {
   const particles = createParticles(document.getElementById('particles'))
   const ceremonyEl = document.getElementById('ceremony')
 
+  // --- audio: one-time hero invite → resumes context; then a corner mute toggle ---
+  const audio = createAudio()
+  const invite = document.getElementById('sound-invite')
+  const toggle = document.getElementById('sound-toggle')
+  invite.innerHTML = mdi('mdiVolumeHigh', 20, '#38f5c9') + '<span>Enable sound</span>'
+  toggle.innerHTML = mdi('mdiVolumeHigh', 22, '#38f5c9')
+  invite.style.display = 'flex'
+  invite.addEventListener('click', async () => {
+    await audio.enable()
+    invite.style.display = 'none'
+    toggle.style.display = 'grid'
+  })
+  toggle.addEventListener('click', () => {
+    const muted = audio.toggleMute()
+    toggle.innerHTML = mdi(muted ? 'mdiVolumeOff' : 'mdiVolumeHigh', 22, '#38f5c9')
+  })
+  window.__audio = audio
+
   let last = 0
   function frame() {
     requestAnimationFrame(frame)
@@ -59,6 +78,7 @@ if (shouldUseFallback({ gl, reducedMotion })) {
     if (ceremonyEl) ceremonyEl.classList.toggle('show', revealed)
     annotations.update()
     particles.update(elapsed)
+    audio.update(master.progress)
     world.composer.render()
   }
   frame()
