@@ -49,18 +49,26 @@ if (shouldUseFallback({ gl, reducedMotion })) {
   const audio = createAudio()
   const invite = document.getElementById('sound-invite')
   const toggle = document.getElementById('sound-toggle')
-  invite.innerHTML = mdi('mdiVolumeHigh', 20, '#38f5c9') + '<span>Enable sound</span>'
-  toggle.innerHTML = mdi('mdiVolumeHigh', 22, '#38f5c9')
-  invite.style.display = 'flex'
-  invite.addEventListener('click', async () => {
-    await audio.enable()
-    invite.style.display = 'none'
-    toggle.style.display = 'grid'
-  })
-  toggle.addEventListener('click', () => {
-    const muted = audio.toggleMute()
-    toggle.innerHTML = mdi(muted ? 'mdiVolumeOff' : 'mdiVolumeHigh', 22, '#38f5c9')
-  })
+  if (invite && toggle) {
+    invite.innerHTML = mdi('mdiVolumeHigh', 20, '#38f5c9') + '<span>Enable sound</span>'
+    toggle.innerHTML = mdi('mdiVolumeHigh', 22, '#38f5c9')
+    toggle.setAttribute('aria-pressed', 'false')
+    invite.style.display = 'flex'
+    invite.addEventListener('click', async () => {
+      invite.style.display = 'none' // hide before awaiting so a rapid double-click can't re-enter enable()
+      try {
+        await audio.enable()
+        toggle.style.display = 'grid'
+      } catch (e) {
+        invite.style.display = 'flex' // allow retry if the context failed to start
+      }
+    })
+    toggle.addEventListener('click', () => {
+      const muted = audio.toggleMute()
+      toggle.innerHTML = mdi(muted ? 'mdiVolumeOff' : 'mdiVolumeHigh', 22, '#38f5c9')
+      toggle.setAttribute('aria-pressed', String(muted))
+    })
+  }
   window.__audio = audio
 
   let last = 0

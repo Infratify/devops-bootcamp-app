@@ -12,18 +12,25 @@ export function createAudio() {
   let bed = null
   let sfx = null
   let enabled = false
+  let enabling = false // synchronous re-entrancy guard: blocks a second call while the
+                        // first is still awaiting bundle.resume(), before `enabled` flips
   let muted = false
   let prev = 0
 
   async function enable() {
-    if (enabled) return
-    bundle = createAudioContext()
-    bed = createBed(bundle)
-    sfx = createSfx(bundle)
-    await bundle.resume()
-    bed.start()
-    bundle.master.gain.setTargetAtTime(0.9, bundle.ctx.currentTime, 0.4)
-    enabled = true
+    if (enabled || enabling) return
+    enabling = true
+    try {
+      bundle = createAudioContext()
+      bed = createBed(bundle)
+      sfx = createSfx(bundle)
+      await bundle.resume()
+      bed.start()
+      bundle.master.gain.setTargetAtTime(0.9, bundle.ctx.currentTime, 0.4)
+      enabled = true
+    } finally {
+      enabling = false
+    }
   }
 
   function toggleMute() {
