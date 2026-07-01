@@ -1,0 +1,22 @@
+{
+  "name": "bootcamp-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "DevOps Bootcamp demo dashboard — a real frontend app to containerise",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 8080"
+  },
+  "dependencies": {
+    "animejs": "^3.2.2",
+    "canvas-confetti": "^1.9.3",
+    "chart.js": "^4.4.7",
+    "date-fns": "^4.1.0",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "vite": "^6.0.7"
+  }
+}

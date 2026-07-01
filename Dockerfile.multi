@@ -1,0 +1,14 @@
+# Multi-stage — build with the heavy toolbox, ship only the result.
+# Stage 1 (build): node + every library builds the static files.
+# Stage 2 (final): nginx + the built files ONLY. Result: a tiny image (app:kecil).
+FROM node:20 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

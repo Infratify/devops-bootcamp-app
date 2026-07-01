@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevOps Bootcamp — Dashboard</title>
+  </head>
+  <body>
+    <main id="app">
+      <header class="hero">
+        <h1>DevOps Bootcamp</h1>
+        <p id="subtitle">Container Dashboard</p>
+        <p id="clock" class="clock"></p>
+      </header>
+
+      <section class="cards" id="cards"></section>
+
+      <section class="chart-wrap">
+        <canvas id="chart"></canvas>
+      </section>
+
+      <footer class="foot">
+        <button id="celebrate">Deploy 🎉</button>
+        <p id="built"></p>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
