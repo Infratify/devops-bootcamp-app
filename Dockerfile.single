@@ -1,9 +1,0 @@
-# Single-stage — the naive way: ships node + every library + the source.
-# Result: a huge image (app:besar).
-FROM node:20
-WORKDIR /app
-COPY . .
-RUN npm ci
-RUN npm run build
-EXPOSE 8080
-CMD ["npm", "run", "preview"]
