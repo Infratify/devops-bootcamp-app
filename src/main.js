@@ -7,6 +7,7 @@ import { createLayers } from './scene/layers.js'
 import { createMasterTimeline } from './timeline.js'
 import { createAnnotations } from './overlay/annotations.js'
 import { createParticles } from './overlay/particles.js'
+import { createTerminal } from './overlay/terminal.js'
 
 const canvas = document.getElementById('stage')
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -33,6 +34,7 @@ if (!gl) {
   })
 
   const particles = createParticles(document.getElementById('particles'))
+  const terminal = createTerminal(document.getElementById('terminal'))
 
   function frame() {
     requestAnimationFrame(frame)
@@ -41,6 +43,8 @@ if (!gl) {
     whale.update(elapsed)
     annotations.update()
     particles.update(elapsed)
+    const sp = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight || 1)
+    terminal.setProgress(sp <= 0.85 ? 0 : (sp - 0.85) / 0.15)
     world.composer.render()
   }
   frame()

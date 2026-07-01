@@ -25,3 +25,18 @@ test('scrolling to the bottom scrubs without errors and moves the whale', async 
   expect(endX).toBeGreaterThan(startX)
   expect(errors, errors.join('\n')).toEqual([])
 })
+
+test('terminal draws near bottom of scroll', async ({ page }) => {
+  await page.goto('/')
+  await page.waitForFunction(() => document.body.dataset.mode === 'webgl')
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForTimeout(3000)
+  // canvas has non-empty pixels in the terminal region
+  const hasInk = await page.evaluate(() => {
+    const c = document.getElementById('terminal')
+    const ctx = c.getContext('2d')
+    const d = ctx.getImageData(60, c.height - 150, 400, 120).data
+    return d.some((v, i) => i % 4 === 3 && v > 0)
+  })
+  expect(hasInk).toBe(true)
+})
