@@ -3,9 +3,8 @@
 # Stage 2 ships only the built files on a tiny nginx image.
 FROM node:20 AS build
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
 COPY . .
+RUN npm ci
 RUN npm run build
 
 FROM nginx:alpine
