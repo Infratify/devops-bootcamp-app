@@ -52,10 +52,13 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, bloom,
     tl.add(s.labelOn, { v: 1, duration: dur }, at)
   })
 
-  // --- Exploded cutaway (72%..85%): spread runtime slabs apart, then reassemble ---
-  runtime.forEach((s, i) => {
-    const spread = (i - (runtime.length - 1) / 2) * 1.9
-    tl.add(s.mesh.position, { y: s.home.y + spread + 2, duration: 0.06 * D, ease: 'outQuad' }, 0.73 * D)
+  // --- Exploded cutaway (72%..85%): a MINIMAL fan-out of BOTH stacks — each
+  //     expands upward (base anchored) so it never dips into the whale — then
+  //     reassembles. ---
+  layers.slabs.forEach((s) => {
+    const stack = s.data.stage === 'build' ? build : runtime
+    const i = stack.indexOf(s)
+    tl.add(s.mesh.position, { y: s.home.y + i * 0.45, duration: 0.06 * D, ease: 'outQuad' }, 0.73 * D)
     tl.add(s.mesh.position, { y: s.home.y, duration: 0.05 * D, ease: 'inOutQuad' }, 0.80 * D)
   })
 
@@ -85,6 +88,7 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, bloom,
   }, 0.91 * D)
   // 6. a triumphant spin of the whole whale as the logo lands
   tl.add(whale.body.rotation, { y: [0, Math.PI * 0.6], duration: 0.09 * D, ease: 'outCubic' }, 0.90 * D)
+  // (the DOCKER ascii ceremony is toggled from the render loop on reveal — see main.js)
 
   // --- link to scroll ---
   onScroll({ target: scrollEl, sync: 0.15, enter: 'top top', leave: 'bottom bottom' }).link(tl)
