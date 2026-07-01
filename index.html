@@ -3,27 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DevOps Bootcamp — Dashboard</title>
+    <title>Anatomy of a Docker Image</title>
   </head>
   <body>
-    <main id="app">
-      <header class="hero">
-        <h1>DevOps Bootcamp</h1>
-        <p id="subtitle">Container Dashboard</p>
-        <p id="clock" class="clock"></p>
-      </header>
+    <div id="app">
+      <canvas id="stage"></canvas>
+      <canvas id="particles"></canvas>
+      <svg id="svg-overlay" xmlns="http://www.w3.org/2000/svg"></svg>
+      <canvas id="terminal"></canvas>
 
-      <section class="cards" id="cards"></section>
-
-      <section class="chart-wrap">
-        <canvas id="chart"></canvas>
-      </section>
-
-      <footer class="foot">
-        <button id="celebrate">Deploy 🎉</button>
-        <p id="built"></p>
-      </footer>
-    </main>
+      <div id="scenes">
+        <section class="scene" data-beat="hero"></section>
+        <section class="scene" data-beat="build"></section>
+        <section class="scene" data-beat="cut"></section>
+        <section class="scene" data-beat="artifact"></section>
+        <section class="scene" data-beat="explode"></section>
+        <section class="scene" data-beat="run"></section>
+        <section class="scene" data-beat="recap"></section>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
