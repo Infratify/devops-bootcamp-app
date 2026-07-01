@@ -6,6 +6,9 @@
 // re-arms a cue automatically once the user scrolls back below it.
 //
 // cues: [{ id, at, kind }]   kind ∈ 'tick' | 'cut' | 'riser'
+// No jitter-epsilon on the prev < at <= curr test: onScroll({ sync: 0.15 }) in
+// timeline.js already smooths the playhead into a monotonic-forward progress,
+// so boundaries can't oscillate frame-to-frame and re-fire spuriously.
 export function crossedForward(prev, curr, cues) {
   if (curr <= prev) return []
   const out = []
