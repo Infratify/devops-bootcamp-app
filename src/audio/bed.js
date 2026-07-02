@@ -37,10 +37,12 @@ export function createBed({ ctx, master, reverb }) {
     lfo.start()
   }
 
-  // x in 0..1 → smoothly-ramped gain + lowpass cutoff.
+  // x in 0..1 → smoothly-ramped gain + lowpass cutoff. Kept as a faint sub-
+  // undercurrent beneath the real ambient track (music.js), so the two low ends
+  // don't clash; it still swells subtly with scroll.
   function setIntensity(x) {
     const t = ctx.currentTime
-    out.gain.setTargetAtTime(0.02 + 0.16 * x, t, 0.3)
+    out.gain.setTargetAtTime(0.006 + 0.04 * x, t, 0.3)
     filter.frequency.setTargetAtTime(220 + 900 * x, t, 0.3)
   }
 

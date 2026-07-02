@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test'
 
 test('the sound invite enables audio and reveals the mute toggle', async ({ page }) => {
-  test.setTimeout(60000)
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
@@ -18,15 +17,15 @@ test('the sound invite enables audio and reveals the mute toggle', async ({ page
   await expect(page.locator('#sound-toggle')).toBeVisible()
   await expect(invite).toBeHidden()
 
+  // Exercise the ENABLED, UNMUTED sfx path (tick/cut/riser) + bed.setIntensity by
+  // sweeping progress forward across every cue via the public update() API. This
+  // runs the real Web Audio voice builders — and confirms the background music
+  // started without error — deterministically, without depending on the slow
+  // headless scroll→reveal convergence (which the bg audio load slows further).
+  await page.evaluate(() => { for (const p of [0.1, 0.5, 0.95]) window.__audio.update(p) })
+
   const muted = await page.evaluate(() => window.__audio.toggleMute())
   expect(muted).toBe(true)
-
-  // Exercise the enabled SFX path (sfx.tick/cut/riser via update()) by scrolling
-  // through the whole timeline now that audio is live, not just the disabled no-op.
-  // ~5fps headless WebGL + onScroll sync:0.15 smoothing converges per-frame; poll
-  // for the reveal (like smoke.spec.js) rather than a fixed sleep.
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForFunction(() => window.__scene.whale.containers.scale.x > 0.9, { timeout: 50000 })
 
   expect(errors, errors.join('\n')).toEqual([])
 })

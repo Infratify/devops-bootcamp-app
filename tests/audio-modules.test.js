@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { createAudioContext } from '../src/audio/context.js'
 import { createBed } from '../src/audio/bed.js'
 import { createSfx } from '../src/audio/sfx.js'
+import { createMusic } from '../src/audio/music.js'
 import { createAudio } from '../src/audio/index.js'
 
 describe('audio modules (import smoke)', () => {
@@ -15,6 +16,10 @@ describe('audio modules (import smoke)', () => {
 
   it('sfx exports a factory', () => {
     expect(typeof createSfx).toBe('function')
+  })
+
+  it('music exports a factory', () => {
+    expect(typeof createMusic).toBe('function')
   })
 
   it('createAudio update() is a safe no-op before enable()', () => {
