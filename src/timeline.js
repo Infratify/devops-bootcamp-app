@@ -64,16 +64,23 @@ export function createMasterTimeline({ camera, lookTarget, whale, layers, bloom,
   })
 
   // --- FINALE (85%..99%): the two stacks COMBINE, then the real Docker logo reveals ---
-  // 1. both stacks slide together onto the whale's deck (combine), still visible
+  // 1. both stacks swoop onto the whale's deck while shrinking in LOCKSTEP with
+  //    the move: position and scale share the same window and ease, so the gap
+  //    between containers and the containers themselves shrink by the same
+  //    factor and never interpenetrate mid-flight. Explicit [from, to] on scale
+  //    so reverse scrubbing fills deterministically.
   layers.slabs.forEach((s) => {
     tl.add(s.labelOn, { v: 0, duration: 0.02 * D }, 0.85 * D)
     tl.add(s.mesh.position, { x: 0, y: 0.4, z: 0, duration: 0.06 * D, ease: 'inOutQuad' }, 0.85 * D)
+    tl.add(s.mesh.scale, {
+      x: [1, 0.01], y: [1, 0.01], z: [1, 0.01],
+      duration: 0.06 * D, ease: 'inOutQuad',
+    }, 0.85 * D)
   })
-  // 2. the merged stack dissolves as the real containers take its place
+  // 2. the shrinking stacks dissolve as the real containers take their place
   layers.slabs.forEach((s) => {
-    tl.add(s.mesh.scale, { x: 0.01, y: 0.01, z: 0.01, duration: 0.04 * D, ease: 'inQuad' }, 0.90 * D)
-    tl.add(s.mat, { opacity: 0, duration: 0.035 * D }, 0.90 * D)
-    tl.add(s.edgeMat, { opacity: 0, duration: 0.035 * D }, 0.90 * D)
+    tl.add(s.mat, { opacity: 0, duration: 0.05 * D }, 0.87 * D)
+    tl.add(s.edgeMat, { opacity: 0, duration: 0.05 * D }, 0.87 * D)
   })
   // 3. white flash at the moment of reveal
   tl.add('#flash', { opacity: 0.85, duration: 0.02 * D, ease: 'outQuad' }, 0.905 * D)

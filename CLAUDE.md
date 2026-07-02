@@ -41,7 +41,7 @@ There is no autoplay. `src/timeline.js` builds **one** anime.js master timeline 
 Because tweens are scrubbed **both directions** (scroll up reverses them), several tweens declare explicit `[from, to]` arrays so they fill deterministically on reverse — preserve this when editing timeline tweens.
 
 ### Scene modules (`src/scene/`)
-- `world.js` — `WebGLRenderer` + `EffectComposer` with `UnrealBloomPass`, lights, fog, grid. Returns `{ scene, renderer, composer, bloom, resize }`.
+- `world.js` — `WebGLRenderer` + `EffectComposer` with `UnrealBloomPass`, lights, fog, grid. Returns `{ scene, renderer, composer, bloom, resize }`. `resize()` also sets an aspect-compensating `camera.zoom` (< 1 on narrow/portrait viewports) so the landscape-tuned camera path still frames the whale on phones — zoom composes with the timeline's position tweens.
 - `camera.js` — camera rig plus `CAMERA_KEYS`: camera pose (position + lookAt) per scroll beat. The timeline interpolates between these keyframes.
 - `whale.js` — the Docker "Moby" whale GLB (`public/whale.glb`), re-skinned into the blueprint look. The model's **own** blue containers are moved into a stable `containers` group and hidden (scale ~0); the finale scales them back in as the payoff ("your image is built").
 - `layers.js` — one real 3D container (`public/container.glb`) per Dockerfile instruction. Exports `LAYER_SPACING` / `LAYER_BASE_Y` used by the timeline for stacking.
@@ -53,7 +53,7 @@ Because tweens are scrubbed **both directions** (scroll up reverses them), sever
 `layers.js` produces slab objects `{ id, data, mesh (Group), mat, edgeMat, home (Vector3), labelOn }` consumed by both `timeline.js` and `annotations.js`. `labelOn.v` (0..1) toggles a slab's annotation chip independently of the container's visibility (so the dimmed build stack can stay on screen without its labels during the multi-stage cut).
 
 ### Overlays (`src/overlay/`)
-- `annotations.js` — SVG chips parked in a right-hand gutter, each joined to its slab by a leader line. Each chip also carries a step-number badge (its 1-based Dockerfile command order) floating just past the chip's right edge. Positions are projected from 3D each frame and de-collided vertically (`MIN_GAP`).
+- `annotations.js` — SVG chips right-aligned against a fixed column of step-number badges (1-based Dockerfile command order) at the right screen edge, each chip joined to its slab by a leader line. Positions are projected from 3D each frame and de-collided vertically. `layout()` rescales every metric and ellipsizes over-long commands whenever the viewport width changes — this is what keeps the labels on-screen in mobile portrait.
 - `particles.js` — Canvas 2D scanlines + drifting "plankton".
 
 ### Audio (`src/audio/`, `src/beats.js`)

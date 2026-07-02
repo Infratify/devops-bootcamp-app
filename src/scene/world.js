@@ -34,11 +34,17 @@ export function createWorld(canvas, camera) {
   function resize() {
     const w = window.innerWidth, h = window.innerHeight
     camera.aspect = w / h
+    // The scroll camera path is tuned for landscape. On narrow/portrait
+    // viewports the horizontal FOV collapses, so zoom out (zoom < 1) until the
+    // whale + stacks fit the width again. Zoom is orthogonal to the timeline's
+    // position/lookAt tweens, so this composes with any scroll pose.
+    camera.zoom = Math.min(1, Math.max(0.55, camera.aspect / 1.4))
     camera.updateProjectionMatrix()
     renderer.setSize(w, h)
     composer.setSize(w, h)
   }
   window.addEventListener('resize', resize)
+  resize()
 
   return { scene, renderer, composer, bloom, resize }
 }
