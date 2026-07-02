@@ -38,7 +38,8 @@ export function createLayers() {
     slabs.push({ id: data.id, data, mesh, mat, edgeMat, home: home.clone(), labelOn: { v: 0 } })
   })
 
-  new GLTFLoader().load('/container.glb', (gltf) => {
+  // BASE_URL-prefixed so the asset resolves under GitHub Pages' /<repo>/ base
+  new GLTFLoader().load(import.meta.env.BASE_URL + 'container.glb', (gltf) => {
     const proto = gltf.scene
     const box = new THREE.Box3().setFromObject(proto)
     const size = new THREE.Vector3(); box.getSize(size)

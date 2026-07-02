@@ -46,7 +46,7 @@ if (shouldUseFallback({ gl, reducedMotion })) {
   const ceremonyEl = document.getElementById('ceremony')
 
   // --- audio: one-time hero invite → resumes context; then a corner mute toggle ---
-  const audio = createAudio({ musicUrl: '/ambient.mp3' })
+  const audio = createAudio({ musicUrl: import.meta.env.BASE_URL + 'ambient.mp3' })
   const invite = document.getElementById('sound-invite')
   const toggle = document.getElementById('sound-toggle')
   if (invite && toggle) {

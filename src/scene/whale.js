@@ -23,7 +23,8 @@ export function createWhale() {
     color: '#38f5c9', transparent: true, opacity: 0.85,
   })
 
-  new GLTFLoader().load('/whale.glb', (gltf) => {
+  // BASE_URL-prefixed so the asset resolves under GitHub Pages' /<repo>/ base
+  new GLTFLoader().load(import.meta.env.BASE_URL + 'whale.glb', (gltf) => {
     const model = gltf.scene
     const toContainers = []
 
