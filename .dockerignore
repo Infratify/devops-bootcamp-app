@@ -1,0 +1,15 @@
+# Keep the build context small and let `npm ci` produce a clean,
+# container-native node_modules instead of shipping the host's in.
+node_modules
+dist
+.git
+.github
+*.log
+.DS_Store
+.superpowers/
+test-results/
+playwright-report/
+.playwright-cli/
+docs
+e2e
+tests
